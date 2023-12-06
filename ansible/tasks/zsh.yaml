@@ -1,0 +1,24 @@
+- name: Install zsh
+  become: true
+  ansible.builtin.apt:
+    name: zsh
+    state: present
+
+# TODO: use handlers or blocks for all the conditionals
+- name: Check for zsh
+  ansible.builtin.shell: command -v zsh
+  register: zsh_exists
+  ignore_errors: yes
+
+- name: Set zsh as default shell
+  become: true
+  user:
+    name: "{{lookup('env', 'USER')}}"
+    shell: /usr/bin/zsh
+
+# install oh my zsh
+- name: Install Oh My Zsh # noqa: latest
+  ansible.builtin.git:
+    repo: https://github.com/ohmyzsh/ohmyzsh.git
+    dest: ~/.oh-my-zsh
+    depth: 1

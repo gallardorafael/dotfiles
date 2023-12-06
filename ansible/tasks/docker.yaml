@@ -1,0 +1,76 @@
+- name: Add Docker GPG apt Key
+  become: true
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+- name: Update apt and install docker
+  become: true
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    state: latest
+    update_cache: true
+
+- name: Add user to docker group
+  become: true
+  ansible.builtin.user:
+    name: "{{lookup('env', 'USER')}}"
+    groups:
+      - docker
+    append: yes
+
+- name: Check for nvidia
+  ansible.builtin.shell: command -v nvidia-smi
+  register: cuda_exists
+  ignore_errors: yes
+
+- name: Check for nvidia-container-toolkit
+  ansible.builtin.shell: command -v nvidia-ctk
+  register: ctk_exists
+  ignore_errors: yes
+
+- name: Setup nvidia-container-toolkit repository
+  become: true
+  when: cuda_exists is not failed and ctk_exists is failed
+  ansible.builtin.shell:
+    cmd: >
+      _distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+      && distribution="${_distribution//pop/ubuntu}"
+      && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+      && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list |
+      sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' |
+      tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+    executable: "{{lookup('env', 'SHELL')}}"
+
+- name: Install nvidia-container-toolkit
+  become: true
+  when: cuda_exists is not failed and ctk_exists is failed
+  register: nvidia_docker_installed
+  ansible.builtin.apt:
+    update_cache: true
+    name: nvidia-container-toolkit
+    state: latest
+
+- name: Setup nvidia-container-toolkit runtime
+  become: true
+  when: cuda_exists is not failed and ctk_exists is failed
+  ansible.builtin.shell: nvidia-ctk runtime configure --runtime=docker
+
+- name: Restart docker
+  become: true
+  when: cuda_exists is not failed and ctk_exists is failed
+  ansible.builtin.service:
+    name: docker
+    state: restarted
+
