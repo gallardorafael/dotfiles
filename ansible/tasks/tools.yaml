@@ -1,0 +1,97 @@
+- name: Install other tools (tmux, fzf, rg, etc.)
+  become: true
+  ansible.builtin.apt:
+    name:
+      - tmux
+      - tmuxp
+      - fzf
+      - ripgrep
+      - fd-find
+      - zoxide
+      - xclip
+      - git-absorb
+    state: latest
+
+- name: Add fd alias
+  ansible.builtin.file:
+    path: "{{lookup('env', 'HOME')}}/.local/bin/fd"
+    src: "/usr/bin/fdfind"
+    state: link
+
+# bottom
+- name: Check for bottom
+  ansible.builtin.shell: command -v btm
+  register: bottom_exists
+  ignore_errors: true
+
+- name: Download bottom deb
+  when: bottom_exists is failed
+  ansible.builtin.get_url:
+    url: https://github.com/ClementTsang/bottom/releases/download/{{bottom_version | default('0.9.1')}}/bottom_{{bottom_version | default('0.9.1')}}_amd64.deb
+    dest: /tmp/bottom.deb
+
+- name: Install bottom deb
+  become: true
+  when: bottom_exists is failed
+  ansible.builtin.shell: dpkg -i /tmp/bottom.deb
+
+# lazydocker
+- name: Check for lazydocker
+  ansible.builtin.shell: command -v lazydocker
+  register: lazydocker_exists
+  ignore_errors: true
+
+- name: Install lazydocker
+  when: lazydocker_exists
+  ansible.builtin.shell: curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+
+# mega desktop
+- name: Check for mega desktop
+  ansible.builtin.shell: command -v megasync
+  register: mega_exists
+  ignore_errors: true
+
+- name: Download mega deb
+  when: mega_exists is failed
+  ansible.builtin.get_url:
+    url: https://mega.nz/linux/repo/xUbuntu_22.04/amd64/megasync-xUbuntu_22.04_amd64.deb
+    dest: /tmp/mega.deb
+
+- name: Install mega deb
+  become: true
+  when: mega_exists is failed
+  ansible.builtin.shell: dpkg -i /tmp/mega.deb
+
+# AppImageLauncher
+- name: Check for appimagelauncher cli
+  ansible.builtin.shell: command -v ail-cli
+  register: ail_exists
+  ignore_errors: true
+
+- name: Download appimagelauncher deb
+  when: ail_exists is failed
+  ansible.builtin.get_url:
+    url: https://github.com/TheAssassin/AppImageLauncher/releases/download/v2.2.0/appimagelauncher_2.2.0-travis995.0f91801.bionic_amd64.deb
+    dest: /tmp/ail.deb
+
+- name: Install appimagelauncher deb
+  become: true
+  when: ail_exists is failed
+  ansible.builtin.shell: dpkg -i /tmp/ail.deb
+
+# obsidian
+- name: Check for Obsidian
+  ansible.builtin.shell: command -v obsidian
+  register: obsidian_exists
+  ignore_errors: true
+
+- name: Download Obsidian AppImage
+  when: obsidian_exists is failed
+  ansible.builtin.get_url:
+    url: https://github.com/obsidianmd/obsidian-releases/releases/download/v{{obsidian_version | default('1.4.16')}}/Obsidian-{{obsidian_version | default('1.4.16')}}.AppImage
+    dest: /tmp/obsidian.AppImage
+
+- name: Install Obsidian AppImage
+  become: true
+  when: obsidian_exists is failed
+  ansible.builtin.shell: ail-cli integrate /tmp/obsidian.AppImage

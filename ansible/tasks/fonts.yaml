@@ -1,0 +1,26 @@
+- name: Check for Nerd Font Symbols
+  ansible.builtin.shell: test -n "$(fc-list | grep -i symbolsnerdfont | head -n 1)"
+  register: nerd_symbols_installed
+  ignore_errors: true
+
+- name: Download Nerd Font Symbols
+  when: nerd_symbols_installed is failed
+  ansible.builtin.get_url:
+    url: https://github.com/ryanoasis/nerd-fonts/releases/download/v{{nerd_symbols_version | default('3.0.1')}}/NerdFontsSymbolsOnly.tar.xz
+    dest: /tmp/nerd_font_symbols.tar.xz
+
+- name: Create Nerd Font Symbols dir
+  when: nerd_symbols_installed is failed
+  ansible.builtin.file:
+    path: "{{lookup('env', 'HOME')}}/.local/share/fonts/nerd_font_symbols"
+    state: directory
+
+- name: Unarchive Nerd Font Symbols
+  when: nerd_symbols_installed is failed
+  ansible.builtin.unarchive:
+    src: /tmp/nerd_font_symbols.tar.xz
+    dest: "{{lookup('env', 'HOME')}}/.local/share/fonts/nerd_font_symbols"
+
+- name: Regenerate font cache
+  when: nerd_symbols_installed is failed
+  ansible.builtin.shell: fc-cache -f -v
