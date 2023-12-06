@@ -14,6 +14,7 @@
     obsidian_version: "1.4.16"
     bottom_version: "0.9.1"
     nerd_symbols_version: "3.0.1"
+    appimages_path: "~/Applications/"
 
   # TODO: validate that the playbook is not being ran as root
   tasks:
