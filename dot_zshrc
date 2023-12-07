@@ -100,6 +100,12 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# scripts
+command_exists () {
+    command -v $1 &> /dev/null
+    return $?
+}
+
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba init' !!
 export MAMBA_EXE='/home/$USER/Downloads/bin/micromamba';
@@ -123,7 +129,14 @@ alias c="clear"
 alias mm="micromamba"
 
 # zoxide
-eval "$(zoxide init zsh)"
+if command_exists "zoxide"; then
+    eval "$(zoxide init zsh)"
+fi
+
+# starship
+if command_exists "starship"; then
+    eval "$(starship init zsh)"
+fi
  
 # kitty path
 # export PATH=$PATH:~/.local/kitty.app/bin
