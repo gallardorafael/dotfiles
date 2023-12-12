@@ -106,19 +106,6 @@ command_exists () {
     return $?
 }
 
-# >>> mamba initialize >>>
-# !! Contents within this block are managed by 'mamba init' !!
-export MAMBA_EXE='/home/$USER/Downloads/bin/micromamba';
-export MAMBA_ROOT_PREFIX='/home/$USER/micromamba';
-__mamba_setup="$("$MAMBA_EXE" shell hook --shell bash --root-prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__mamba_setup"
-else
-    alias micromamba="$MAMBA_EXE"  # Fallback on help from mamba activate
-fi
-unset __mamba_setup
-# <<< mamba initialize <<<
-
 # aliases
 alias openapp=xdg-open
 alias jl=jupyter-lab
@@ -126,7 +113,7 @@ alias ssh="kitty +kitten ssh"
 alias nv="nvim"
 alias ipy="ipython"
 alias c="clear"
-alias mm="micromamba"
+alias lzd='lazydocker'
 
 # zoxide
 if command_exists "zoxide"; then
@@ -141,7 +128,6 @@ fi
 # kitty path
 # export PATH=$PATH:~/.local/kitty.app/bin
 source ~/.bash_profile
-alias lzd='lazydocker'
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
