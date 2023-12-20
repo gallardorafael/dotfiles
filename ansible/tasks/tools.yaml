@@ -42,9 +42,8 @@
   ignore_errors: true
 
 - name: Install yazi (latest)
-  become: true
   when: yazi_exists is failed
-  ansible.builtin.shell: cargo install --locked --git https://github.com/sxyazi/yazi.git
+  ansible.builtin.shell: "$HOME/.cargo/bin/cargo install --locked --git https://github.com/sxyazi/yazi.git"
 
 # chezmoi
 - name: Check for chezmoi
