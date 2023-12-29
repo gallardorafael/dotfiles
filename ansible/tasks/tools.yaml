@@ -17,6 +17,23 @@
     path: "{{lookup('env', 'HOME')}}/.local/bin/fd"
     src: "/usr/bin/fdfind"
     state: link
+  
+# tmux plugin manager
+- name: Check if tpm folder already exists
+  ansible.builtin.stat:
+    path: "{{tmux_plugins_path | default('~/.tmux/plugins/')}}/tpm"
+  register: tpm_path
+
+- name: Clone tpm from git
+  ansible.builtin.git:
+    force: true
+    repo: https://github.com/tmux-plugins/tpm.git
+    dest: "{{tmux_plugins_path | default('~/.tmux/plugins/')}}/tpm"
+
+- name: tpm repository cloned
+  ansible.builtin.debug:
+    msg: "tpm repository cloned to {{ tmux_plugins_path }}, install the plugin by updating configs with chezmoi and running tmux prefix + I"
+  when: dir_to_check.stat.isdir is defined and dir_to_check.stat.isdir
 
 # bottom
 - name: Check for bottom
