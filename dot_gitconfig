@@ -4,9 +4,6 @@
 	prune = true
 [alias]
 	suno = status -uno
-[user]
-	name = Rafael Gallardo
-	email = rafael.gallardo@algotive.ai
 [rebase]
 	autoStash = true
 [init]
