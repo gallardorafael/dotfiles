@@ -46,7 +46,7 @@
 - name: Download bottom deb
   when: bottom_exists is failed
   ansible.builtin.get_url:
-    url: https://github.com/ClementTsang/bottom/releases/download/{{bottom_version | default('0.9.1')}}/bottom_{{bottom_version | default('0.9.1')}}_amd64.deb
+    url: https://github.com/ClementTsang/bottom/releases/download/{{bottom_version | default('0.9.1')}}/bottom_{{bottom_version | default('0.9.1')}}-1_amd64.deb
     dest: /tmp/bottom.deb
 
 - name: Install bottom deb
@@ -77,9 +77,11 @@
   register: yazi_exists
   ignore_errors: true
 
-- name: Install yazi (latest)
+- name: Install yazi (snap)
   when: yazi_exists is failed
-  ansible.builtin.shell: "$HOME/.cargo/bin/cargo install --locked --git https://github.com/sxyazi/yazi.git"
+  become: true
+  ansible.builtin.shell: >-
+    snap install yazi --classic
 
 # chezmoi
 - name: Check for chezmoi
@@ -111,7 +113,7 @@
 
 - name: Install lazydocker
   when: lazydocker_exists is failed
-  ansible.builtin.shell: sh /tmp/lazydocker.sh
+  ansible.builtin.shell: /bin/bash /tmp/lazydocker.sh
 
 # mega desktop
 - name: Check for mega desktop
