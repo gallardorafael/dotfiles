@@ -6,8 +6,14 @@
 - name: Download nvm
   when: nvm_exists is failed
   ansible.builtin.get_url:
-    url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
+    url: https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh
     dest: /tmp/nvm_installer.sh
+
+- name: Ensure the 'ansible' directory exists
+  ansible.builtin.file:
+    path: "{{lookup('env', 'HOME')}}/.nvm"
+    state: directory
+    mode: '0755'
 
 # TODO: add creates to applicable scripts
 - name: Install nvm
