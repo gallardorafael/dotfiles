@@ -1,0 +1,17 @@
+- name: Check for ghostty
+  ansible.builtin.shell: command -v ghostty
+  register: ghostty_exists
+  ignore_errors: yes
+
+- name: Install ghostty
+  when: ghostty_exists is failed
+  become: true
+  ansible.builtin.shell: >-
+    /bin/bash sudo snap install ghostty --classic
+  
+- name: Make ghostty the default terminal
+  when: ghostty_exists is failed
+  become: true
+  ansible.builtin.shell: >-
+     update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /snap/ghostty/current/bin/ghostty 50 && 
+     update-alternatives --auto x-terminal-emulator

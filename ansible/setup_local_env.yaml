@@ -1,5 +1,5 @@
 ---
-- name: PopOS 22.04 Playbook
+- name: PopOS 24.04 Playbook
   hosts: localhost
 
   pre_tasks:
@@ -11,8 +11,8 @@
 
   vars:
     golang_version: "1.20.4"
-    obsidian_version: "1.5.3"
-    bottom_version: "0.9.1"
+    obsidian_version: "1.9.14"
+    bottom_version: "0.11.2"
     nerd_symbols_version: "3.0.1"
     appimages_path: "~/Applications/"
     tmux_plugins_path: "~/.tmux/plugins/"
@@ -37,11 +37,11 @@
     - name: Install zsh
       ansible.builtin.include_tasks: "tasks/zsh.yaml"
 
-    - name: Install kitty
-      ansible.builtin.include_tasks: "tasks/kitty.yaml"
-
     - name: Install additional tooling
       ansible.builtin.include_tasks: "tasks/tools.yaml"
+
+    - name: Install Ghostty
+      ansible.builtin.include_tasks: "tasks/ghostty.yaml"
 
     - name: Install docker
       ansible.builtin.include_tasks: "tasks/docker.yaml"
