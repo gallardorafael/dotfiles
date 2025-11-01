@@ -7,7 +7,7 @@
   when: ghostty_exists is failed
   become: true
   ansible.builtin.shell: >-
-    /bin/bash sudo snap install ghostty --classic
+    snap install ghostty --classic
   
 - name: Make ghostty the default terminal
   when: ghostty_exists is failed
