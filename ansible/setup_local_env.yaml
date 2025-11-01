@@ -16,6 +16,7 @@
     nerd_symbols_version: "3.0.1"
     appimages_path: "~/Applications/"
     tmux_plugins_path: "~/.tmux/plugins/"
+    nvidia_container_toolkit_version: "1.18.0-1"
 
   # TODO: validate that the playbook is not being ran as root
   tasks:
@@ -46,7 +47,7 @@
     - name: Install docker
       ansible.builtin.include_tasks: "tasks/docker.yaml"
 
-    - name: Build neovim nightly
-      ansible.builtin.include_tasks: "tasks/neovim_nightly.yaml"
-      tags:
-        - nightly
+    # - name: Build neovim nightly
+    #   ansible.builtin.include_tasks: "tasks/neovim_nightly.yaml"
+    #   tags:
+    #     - nightly
