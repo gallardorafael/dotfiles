@@ -106,15 +106,6 @@ command_exists () {
     return $?
 }
 
-# aliases
-alias openapp=xdg-open
-alias jl=jupyter-lab
-alias ssh="kitty +kitten ssh"
-alias nv="nvim"
-alias ipy="ipython"
-alias c="clear"
-alias lzd='lazydocker'
-
 # zoxide
 if command_exists "zoxide"; then
     eval "$(zoxide init zsh)"
@@ -125,8 +116,6 @@ if command_exists "starship"; then
     eval "$(starship init zsh)"
 fi
  
-# kitty path
-# export PATH=$PATH:~/.local/kitty.app/bin
 source ~/.bash_profile
 
 export NVM_DIR="$HOME/.nvm"

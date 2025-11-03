@@ -1,0 +1,11 @@
+. "$HOME/.cargo/env"
+export PATH="$(go env GOPATH)/bin:$PATH"
+# aliases
+alias openapp="xdg-open"
+alias jl="jupyter-lab"
+alias nv="nvim"
+alias ipy="ipython"
+alias c="clear"
+alias lzd="lazydocker"
+alias kk="k9s"
+alias k="kubectl"
