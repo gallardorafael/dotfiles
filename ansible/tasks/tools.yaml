@@ -34,6 +34,8 @@
 
 - name: Install xh
   when: xh_exists is failed
+  environment:
+    XH_BINDIR: "/usr/local/bin"
   ansible.builtin.shell: sh /tmp/xh.sh
   
 # tmux plugin manager
