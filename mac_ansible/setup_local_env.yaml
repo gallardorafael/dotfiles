@@ -1,0 +1,63 @@
+---
+- name: macOS Apple Silicon Playbook
+  hosts: localhost
+
+  vars:
+    obsidian_version: "1.12.7"
+    bottom_version: "0.11.2"
+    nerd_symbols_version: "3.0.1"
+    tmux_plugins_path: "~/.tmux/plugins/"
+
+  # TODO: validate that the playbook is not being ran as root
+  tasks:
+    - name: Setup core components
+      ansible.builtin.include_tasks: "tasks/core.yaml"
+      tags:
+        - core
+
+    - name: Install Node
+      ansible.builtin.include_tasks: "tasks/npm.yaml"
+      tags:
+        - node
+        - npm
+
+    - name: Install Rust
+      ansible.builtin.include_tasks: "tasks/rust.yaml"
+      tags:
+        - rust
+
+    - name: Install Go
+      ansible.builtin.include_tasks: "tasks/golang.yaml"
+      tags:
+        - go
+        - golang
+
+    - name: Install fonts
+      ansible.builtin.include_tasks: "tasks/fonts.yaml"
+      tags:
+        - fonts
+
+    - name: Install Starship
+      ansible.builtin.include_tasks: "tasks/starship.yaml"
+      tags:
+        - starship
+
+    - name: Install zsh
+      ansible.builtin.include_tasks: "tasks/zsh.yaml"
+      tags:
+        - zsh
+
+    - name: Install additional tooling
+      ansible.builtin.include_tasks: "tasks/tools.yaml"
+      tags:
+        - tools
+
+    - name: Install Ghostty
+      ansible.builtin.include_tasks: "tasks/ghostty.yaml"
+      tags:
+        - ghostty
+
+    - name: Install VSCode
+      ansible.builtin.include_tasks: "tasks/vscode.yaml"
+      tags:
+        - vscode
