@@ -1,0 +1,32 @@
+# vscode — install via DMG (Apple Silicon ARM64)
+- name: Check for vscode
+  ansible.builtin.shell: command -v code
+  register: vscode_exists
+  ignore_errors: true
+
+- name: Download VSCode DMG (ARM64)
+  when: vscode_exists is failed
+  ansible.builtin.get_url:
+    url: "https://code.visualstudio.com/sha/download?build=stable&os=darwin-arm64-dmg"
+    dest: /tmp/vscode.dmg
+
+- name: Mount VSCode DMG
+  when: vscode_exists is failed
+  ansible.builtin.shell: hdiutil attach /tmp/vscode.dmg -nobrowse -quiet
+
+- name: Copy VSCode to /Applications
+  when: vscode_exists is failed
+  ansible.builtin.shell: cp -R "/Volumes/Visual Studio Code/Visual Studio Code.app" /Applications/
+
+- name: Symlink 'code' CLI to /usr/local/bin
+  when: vscode_exists is failed
+  become: true
+  ansible.builtin.file:
+    src: "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
+    dest: /usr/local/bin/code
+    state: link
+
+- name: Unmount VSCode DMG
+  when: vscode_exists is failed
+  ansible.builtin.shell: hdiutil detach "/Volumes/Visual Studio Code" -quiet
+  ignore_errors: true

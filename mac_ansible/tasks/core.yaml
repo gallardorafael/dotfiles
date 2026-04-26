@@ -1,0 +1,43 @@
+- name: Create local bin dir
+  ansible.builtin.file:
+    path: "{{lookup('env', 'HOME')}}/.local/bin"
+    state: directory
+
+# Homebrew
+- name: Check for Homebrew
+  ansible.builtin.shell: command -v brew
+  register: brew_exists
+  ignore_errors: true
+
+- name: Download Homebrew install script
+  when: brew_exists is failed
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+    dest: /tmp/brew_install.sh
+    mode: '0755'
+
+- name: Install Homebrew
+  when: brew_exists is failed
+  ansible.builtin.shell: /bin/bash /tmp/brew_install.sh
+  environment:
+    NONINTERACTIVE: "1"
+
+- name: Ensure Homebrew is on PATH (Apple Silicon)
+  ansible.builtin.lineinfile:
+    path: "{{lookup('env', 'HOME')}}/.zprofile"
+    line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
+    create: true
+
+- name: Install latest git
+  community.general.homebrew:
+    name: git
+    state: latest
+
+- name: Install base packages
+  community.general.homebrew:
+    name:
+      - ninja
+      - cmake
+      - unzip
+      - curl
+    state: present

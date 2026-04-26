@@ -1,0 +1,110 @@
+- name: Install other tools (tmux, fzf, rg, etc.)
+  community.general.homebrew:
+    name:
+      - tmux
+      - tmuxp
+      - fzf
+      - ripgrep
+      - fd
+      - zoxide
+      - git-absorb
+      - pipx
+    state: latest
+
+# xh
+- name: Check for xh
+  ansible.builtin.shell: command -v xh
+  register: xh_exists
+  ignore_errors: true
+
+- name: Install xh
+  when: xh_exists is failed
+  community.general.homebrew:
+    name: xh
+    state: present
+
+# tmux plugin manager
+- name: Clone tpm from git
+  ansible.builtin.git:
+    force: true
+    repo: https://github.com/tmux-plugins/tpm.git
+    dest: "{{tmux_plugins_path | default('~/.tmux/plugins/')}}/tpm"
+
+- name: tpm repository cloned
+  ansible.builtin.debug:
+    msg: "tpm repository cloned to {{ tmux_plugins_path }}, install the plugin by updating configs with chezmoi and running tmux prefix + I"
+  when: dir_to_check.stat.isdir is defined and dir_to_check.stat.isdir
+
+# bottom
+- name: Check for bottom
+  ansible.builtin.shell: command -v btm
+  register: bottom_exists
+  ignore_errors: true
+
+- name: Install bottom
+  when: bottom_exists is failed
+  community.general.homebrew:
+    name: bottom
+    state: present
+
+# k9s
+- name: Check k9s exists
+  ansible.builtin.shell: command -v k9s
+  register: k9s_exists
+  ignore_errors: true
+
+- name: Install k9s
+  when: k9s_exists is failed
+  community.general.homebrew:
+    name: k9s
+    state: present
+
+# yazi
+- name: Check for yazi
+  ansible.builtin.shell: command -v yazi
+  register: yazi_exists
+  ignore_errors: true
+
+- name: Install yazi
+  when: yazi_exists is failed
+  community.general.homebrew:
+    name: yazi
+    state: present
+
+# lazydocker
+- name: Check for lazydocker
+  ansible.builtin.shell: command -v lazydocker
+  register: lazydocker_exists
+  ignore_errors: true
+
+- name: Install lazydocker
+  when: lazydocker_exists is failed
+  community.general.homebrew:
+    name: lazydocker
+    state: present
+
+# Obsidian — install via DMG
+- name: Check for Obsidian
+  ansible.builtin.stat:
+    path: /Applications/Obsidian.app
+  register: obsidian_app
+
+- name: Download Obsidian DMG
+  when: not obsidian_app.stat.exists
+  ansible.builtin.get_url:
+    url: "https://github.com/obsidianmd/obsidian-releases/releases/download/v{{obsidian_version | default('1.12.7')}}/Obsidian-{{obsidian_version | default('1.12.7')}}.dmg"
+    dest: /tmp/obsidian.dmg
+
+- name: Mount Obsidian DMG
+  when: not obsidian_app.stat.exists
+  ansible.builtin.shell: hdiutil attach /tmp/obsidian.dmg -nobrowse -quiet
+  register: obsidian_mount
+
+- name: Copy Obsidian to /Applications
+  when: not obsidian_app.stat.exists
+  ansible.builtin.shell: cp -R "/Volumes/Obsidian/Obsidian.app" /Applications/
+  
+- name: Unmount Obsidian DMG
+  when: not obsidian_app.stat.exists
+  ansible.builtin.shell: hdiutil detach /Volumes/Obsidian -quiet
+  ignore_errors: true

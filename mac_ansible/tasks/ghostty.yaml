@@ -1,0 +1,10 @@
+- name: Check for ghostty
+  ansible.builtin.shell: command -v ghostty
+  register: ghostty_exists
+  ignore_errors: yes
+
+- name: Install ghostty
+  when: ghostty_exists is failed
+  community.general.homebrew_cask:
+    name: ghostty
+    state: present

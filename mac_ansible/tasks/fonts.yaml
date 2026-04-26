@@ -1,0 +1,24 @@
+- name: Check for Nerd Font Symbols
+  ansible.builtin.stat:
+    path: "{{lookup('env', 'HOME')}}/Library/Fonts/nerd_font_symbols"
+  register: nerd_symbols_installed
+
+- name: Download Nerd Font Symbols
+  when: not nerd_symbols_installed.stat.exists
+  ansible.builtin.get_url:
+    url: https://github.com/ryanoasis/nerd-fonts/releases/download/v{{nerd_symbols_version | default('3.0.1')}}/NerdFontsSymbolsOnly.tar.xz
+    dest: /tmp/nerd_font_symbols.tar.xz
+
+- name: Create Nerd Font Symbols dir
+  when: not nerd_symbols_installed.stat.exists
+  ansible.builtin.file:
+    path: "{{lookup('env', 'HOME')}}/Library/Fonts/nerd_font_symbols"
+    state: directory
+
+- name: Unarchive Nerd Font Symbols
+  when: not nerd_symbols_installed.stat.exists
+  ansible.builtin.shell: >-
+    tar -xJf /tmp/nerd_font_symbols.tar.xz -C "{{lookup('env', 'HOME')}}/Library/Fonts/nerd_font_symbols"
+  # Uses macOS BSD tar (libarchive) which handles .xz natively.
+  # ansible.builtin.unarchive is avoided because it falls back to /usr/bin/unzip,
+  # which cannot handle .tar.xz archives.
