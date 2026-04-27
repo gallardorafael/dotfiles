@@ -135,5 +135,11 @@ fi
 unset __mamba_setup
 # <<< mamba initialize <<<
 
-# Added by Antigravity
-export PATH="/Users/yibbtstll/.antigravity/antigravity/bin:$PATH"
+# Antigravity
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+
+# pipx
+export PATH="$HOME/.local/bin:$PATH"
+
+# zsh-autosuggestions
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh

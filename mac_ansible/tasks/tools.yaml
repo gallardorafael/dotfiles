@@ -9,6 +9,8 @@
       - zoxide
       - git-absorb
       - pipx
+      - neovim
+      - zsh-autosuggestions
     state: latest
 
 # xh
