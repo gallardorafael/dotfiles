@@ -13,6 +13,19 @@
       - zsh-autosuggestions
     state: latest
 
+# Colima & Docker
+- name: Install Colima and Docker
+  community.general.homebrew:
+    name:
+      - colima
+      - docker
+    state: latest
+
+- name: Ensure Colima service is started
+  community.general.homebrew_services:
+    name: colima
+    state: started
+
 # xh
 - name: Check for xh
   ansible.builtin.shell: command -v xh
