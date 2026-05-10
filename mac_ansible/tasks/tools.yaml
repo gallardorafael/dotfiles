@@ -19,6 +19,7 @@
     name:
       - colima
       - docker
+      - docker-buildx
     state: latest
 
 - name: Ensure Colima service is started
